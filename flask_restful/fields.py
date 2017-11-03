@@ -223,17 +223,24 @@ class Integer(Raw):
 
     :param int default: The default value for the field, if no value is
         specified.
+    :param bool allow_null: Whether to return None instead of the default
+        int value
     """
-    def __init__(self, default=0, **kwargs):
+    def __init__(self, default=0, allow_null=False, **kwargs):
         super(Integer, self).__init__(default=default, **kwargs)
+        self.allow_null = allow_null
 
     def format(self, value):
         try:
             if value is None:
-                return self.default
+                return self.default if not self.allow_null else None
             return int(value)
         except ValueError as ve:
             raise MarshallingException(ve)
+
+    def output(self, key, obj):
+        value = get_value(key if self.attribute is None else self.attribute, obj)
+        return self.format(value)
 
 
 class Boolean(Raw):

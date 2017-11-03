@@ -300,6 +300,16 @@ class FieldsTestCase(unittest.TestCase):
         field = fields.Integer()
         self.assertEquals(0, field.output("hey", {'hey': None}))
 
+    def test_no_int_with_allow_null(self):
+        field = fields.Integer(allow_null=True)
+        self.assertEquals(None, field.output("hey", {'hey': None}))
+        self.assertEquals(3, field.output("hey", {'hey': 3}))
+
+    def test_no_int_with_allow_null_as_false(self):
+        field = fields.Integer(allow_null=False)
+        self.assertEquals(0, field.output("hey", {'hey': None}))
+        self.assertEquals(3, field.output("hey", {'hey': 3}))
+
     def test_int_decode_error(self):
         field = fields.Integer()
         self.assertRaises(MarshallingException, lambda: field.output("hey", {'hey': 'Explode please I am nowhere looking like an int'}))
